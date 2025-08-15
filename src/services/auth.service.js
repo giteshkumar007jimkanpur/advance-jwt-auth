@@ -32,8 +32,8 @@ const createTokens = async (user, meta = {}) => {
     user: user._id,
     tokenHash: refreshTokenHash,
     expiresAt,
-    ip: meta.ip,
-    userAgent: meta.userAgent,
+    ip: meta?.ip,
+    userAgent: meta?.userAgent,
   });
 
   return { accessToken, refreshToken, refreshTokenDoc };
@@ -81,10 +81,7 @@ const rotateRefreshToken = async (presentedToken, meta = {}) => {
     throw Object.assign(new Error("Refresh token not active"), { status: 401 });
   }
 
-  const { accessToken, refreshToken, refreshTokenDoc } = await createTokens(
-    existing.user,
-    meta
-  );
+  const { accessToken, refreshToken } = await createTokens(existing.user, meta);
 
   // revoked current refresh token and link it to new one
 

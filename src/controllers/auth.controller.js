@@ -5,7 +5,9 @@ const logger = require("../utils/logger");
 
 const register = async (req, res, next) => {
   try {
-    const { email, password, name } = req.body;
+    let { email, password, name } = req.body;
+    email = email?.toString().trim();
+    name = name?.toString().trim();
     const existing = await User.findOne({ email });
     if (existing) {
       return res.status(409).json({ message: "Email already in use" });
@@ -33,7 +35,8 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
+    email = email?.toString().trim();
     const user = await User.findOne({ email });
     if (!user) return res.status(401).json({ message: `Invalid credentials` });
 
@@ -61,7 +64,8 @@ const login = async (req, res, next) => {
 
 const refresh = async (req, res, next) => {
   try {
-    const { refreshToken } = req.body;
+    let { refreshToken } = req.body;
+    refreshToken = refreshToken?.toString().trim();
     const tokens = await authService.rotateRefreshToken(refreshToken, {
       ip: req.ip,
       userAgent: req.get("User-Agent"),
@@ -77,7 +81,8 @@ const refresh = async (req, res, next) => {
 
 const logout = async (req, res) => {
   try {
-    const { refreshToken } = req.body;
+        let { refreshToken } = req.body;
+    refreshToken = refreshToken?.toString().trim();
     const wasRevoked = await authService.revokeRefreshToken(refreshToken);
     if (!wasRevoked) {
       const tokenHash = hashToken(refreshToken);
