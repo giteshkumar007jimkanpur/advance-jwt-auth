@@ -21,7 +21,7 @@ const signRefreshToken = (payload) => {
   //include token id
   const jti = uuidv4();
   const opts = { expiresIn: refreshTokenExpiry };
-  return jwt.sign({ ...payload, jwt }, refreshTokenSecret, opts);
+  return jwt.sign({ ...payload, jti }, refreshTokenSecret, opts);
 };
 
 const verifyAccessToken = (token) => {

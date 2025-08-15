@@ -27,14 +27,14 @@ const createTokens = async (user, meta = {}) => {
     ? parseInt(expiresIn) * 24 * 60 * 60 * 1000
     : 30 * 24 * 60 * 60 * 1000;
   const expiresAt = new Date(Date.now() + msIn);
-
-  const refreshTokenDoc = await RefreshToken.create({
+  const query = {
     user: user._id,
     tokenHash: refreshTokenHash,
     expiresAt,
     ip: meta?.ip,
     userAgent: meta?.userAgent,
-  });
+  };
+  const refreshTokenDoc = await RefreshToken.create(query);
 
   return { accessToken, refreshToken, refreshTokenDoc };
 };
@@ -53,7 +53,10 @@ const rotateRefreshToken = async (presentedToken, meta = {}) => {
   try {
     payload = verifyRefreshToken(presentedToken);
   } catch (err) {
-    throw Object.assign(new Error("Invalid refresh token"), { status: 401 });
+    throw Object.assign(new Error("Invalid refresh token"), {
+      status: 401,
+      cause: err.message,
+    });
   }
 
   const tokenHash = hashToken(presentedToken);
@@ -64,7 +67,7 @@ const rotateRefreshToken = async (presentedToken, meta = {}) => {
   // Revoke all refresh tokens for this user id if we can.
   if (!existing) {
     logger.warn(`Refresh token reuse detected for tokenhash=${tokenHash}`);
-    if (payload && payload.sub) {
+    if (payload?.sub) {
       const updateFilter = { user: payload.sub, revoked: { $exists: false } };
       await RefreshToken.updateMany(updateFilter, { revoked: new Date() });
     }
