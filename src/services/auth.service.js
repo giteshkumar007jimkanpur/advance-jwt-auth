@@ -76,7 +76,7 @@ const rotateRefreshToken = async (presentedToken, meta = {}) => {
 
     throw Object.assign(
       new Error('Refresh token reuse detected; all sessions revoked'),
-      { status: 401 }
+      { status: 401 },
     );
   }
 
@@ -110,13 +110,15 @@ const revokeRefreshToken = async (presentedToken) => {
     },
     {
       $set: { revoked: now },
-    }
+    },
   );
   return result.modifiedCount === 1;
 };
 
 const safeUserAgent = (ua) => {
-  if (!ua || typeof ua !== 'string') return 'unknown';
+  if (!ua || typeof ua !== 'string') {
+    return 'unknown';
+  }
   return sanitize(ua, { allowedTags: [], allowedAttributes: {} }).slice(0, 255);
 };
 

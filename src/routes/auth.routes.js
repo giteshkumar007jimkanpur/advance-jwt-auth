@@ -12,7 +12,7 @@ const {
 router.post(
   '/register',
   validateRequest(registerSchema),
-  authController.register
+  authController.register,
 );
 router.post('/login', validateRequest(loginSchema), authController.login);
 router.post('/refresh', validateRequest(refreshSchema), authController.refresh);

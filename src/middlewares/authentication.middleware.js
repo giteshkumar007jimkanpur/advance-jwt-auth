@@ -4,7 +4,7 @@ const logger = require('../utils/logger');
 const authenticate = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
-    console.log(`authHeader`, authHeader);
+
     if (!authHeader?.startsWith('Bearer')) {
       return res
         .status(401)

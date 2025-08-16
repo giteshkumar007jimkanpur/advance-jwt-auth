@@ -1,7 +1,7 @@
 const { nodeEnv } = require('../config/env');
 const logger = require('../utils/logger');
 
-module.exports = (err, req, res, next) => {
+module.exports = (err, _req, res, _next) => {
   logger.error(err);
   const status = err.status || 500;
   const payload = {

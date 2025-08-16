@@ -5,7 +5,8 @@ const logger = require('../utils/logger');
 
 const register = async (req, res, next) => {
   try {
-    let { email, name, password } = req.body;
+    let { email, name } = req.body;
+    const { password } = req.body;
     email = email?.toString().trim();
     name = name?.toString().trim();
     const existing = await User.findOne({ email });
@@ -35,13 +36,18 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
   try {
-    let { email, password } = req.body;
+    let { email } = req.body;
+    const { password } = req.body;
     email = email?.toString().trim();
     const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ message: `Invalid credentials` });
+    if (!user) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
 
     const ok = await user.comparePassword(password);
-    if (!ok) return res.status(401).json({ message: `Invalid credentials` });
+    if (!ok) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
 
     const tokens = await authService.createTokens(user, {
       ip: req.ip,
@@ -89,12 +95,12 @@ const logout = async (req, res) => {
       logger.warn(
         `Attempt to logout with invalied or already revoked token (hash=${tokenHash.slice(
           0,
-          8
-        )}…)`
+          8,
+        )}…)`,
       );
       return res
         .status(400)
-        .json({ message: `Invalid or already revoked refresh token` });
+        .json({ message: 'Invalid or already revoked refresh token' });
     }
     logger.info('Refresh token revoked successfully');
     res.status(200).json({ message: 'Logged out successfully' });
