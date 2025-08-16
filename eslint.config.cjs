@@ -36,7 +36,7 @@ module.exports = [
             'external', // npm packages
             'internal', // your own modules (like src/, @/)
             ['parent', 'sibling', 'index'], // relative imports
-            'object', //
+            'object',
             'type', // TypeScript types
           ],
           'newlines-between': 'always',

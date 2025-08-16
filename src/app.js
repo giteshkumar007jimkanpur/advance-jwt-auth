@@ -40,7 +40,7 @@ app.use(
       write: (msg) =>
         logger.http ? logger.http(msg.trim()) : logger.info(msg.trim()),
     },
-  })
+  }),
 );
 
 /** Body parsers */
@@ -58,7 +58,7 @@ app.use(
   helmet({
     /** allows Authorization headers for APIs via CORS; other defaults kept */
     crossOriginResourcePolicy: { policy: 'cross-origin' },
-  })
+  }),
 );
 
 /** CORS: allow common frontend origins, tweak as needed */
@@ -70,7 +70,7 @@ app.use(
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     maxAge: 600,
-  })
+  }),
 );
 
 /** Basic rate limit (per IP) */
