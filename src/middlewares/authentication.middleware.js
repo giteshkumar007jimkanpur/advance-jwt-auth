@@ -1,9 +1,13 @@
+/**
+ * Authenticate requests using Bearer access token, attaches req.user on success.
+ */
+
 const { verifyAccessToken } = require('../utils/jwt');
 const logger = require('../utils/logger');
 
 const authenticate = (req, res, next) => {
   try {
-    const authHeader = req.headers.authorization;
+    const authHeader = req.headers.authorization || '';
 
     if (!authHeader?.startsWith('Bearer')) {
       return res

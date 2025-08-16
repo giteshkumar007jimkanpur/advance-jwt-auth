@@ -1,20 +1,27 @@
+/**
+ * RefreshToken model: store hashed refresh tokens with metadata & lifecycle.
+ */
 const mongoose = require('mongoose');
 
-const RefreshTokenSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    require: true,
+const RefreshTokenSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    tokenHash: { type: String, required: true, index: true },
+    createdAt: { type: Date, default: Date.now },
+    expiresAt: { type: Date, required: true },
+    revoked: { type: Date, default: null },
+    replacedByTokenHash: { type: String, default: null },
+    ip: { type: String, default: null },
+    userAgent: { type: String, default: null },
   },
-  tokenHash: { type: String, require: true, index: true },
-  createdAt: { type: Date, default: Date.now },
-  expiresAt: { type: Date, require: true },
-  revoked: { type: Date },
-  replacedByTokenHash: { type: String },
-  ip: { type: String },
-  userAgent: { type: String },
-});
+  { timestamps: false },
+);
 
+/** Virtuals for quick checks (non-persistent) */
 RefreshTokenSchema.virtual('isExpired').get(function () {
   return Date.now() >= this.expiresAt;
 });

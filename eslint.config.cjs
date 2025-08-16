@@ -1,5 +1,5 @@
-const sortDestructureKeysPlugin = require('eslint-plugin-sort-destructure-keys');
 const importPlugin = require('eslint-plugin-import');
+const sortDestructureKeysPlugin = require('eslint-plugin-sort-destructure-keys');
 
 module.exports = [
   {
@@ -15,17 +15,37 @@ module.exports = [
     },
     plugins: {
       'sort-destructure-keys': sortDestructureKeysPlugin,
-      import: importPlugin, // 👈 you missed this!
+      import: importPlugin,
     },
     rules: {
-      // 🔑 Your existing logic
+      // 🔑 Sort destructured object keys
       'sort-destructure-keys/sort-destructure-keys': [
         'error',
         { caseSensitive: false },
       ],
 
-      // ✅ Now ESLint knows where this rule comes from
+      // 🔑 Ensure dependencies are declared in package.json
       'import/no-extraneous-dependencies': 'error',
+
+      // 🔑 Sort and group imports/requires (auto-fix enabled)
+      'import/order': [
+        'error',
+        {
+          groups: [
+            'builtin', // Node.js built-ins (fs, path, etc.)
+            'external', // npm packages
+            'internal', // your own modules (like src/, @/)
+            ['parent', 'sibling', 'index'], // relative imports
+            'object', // import foo = require('foo')
+            'type', // TypeScript types
+          ],
+          'newlines-between': 'always',
+          alphabetize: {
+            order: 'asc', // A → Z
+            caseInsensitive: true,
+          },
+        },
+      ],
 
       // ✅ Best practices
       eqeqeq: ['error', 'always'],

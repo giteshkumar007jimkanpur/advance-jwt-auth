@@ -3,8 +3,10 @@ const express = require('express');
 const router = express.Router();
 const authenticate = require('../middlewares/authentication.middleware');
 
+/** Example protected route */
 router.get('/profile', authenticate, async (req, res) => {
-  res.send('This is home');
+  // Return the identity attached by the auth middleware
+  return res.status(200).json({ message: 'OK', user: req.user });
 });
 
 module.exports = router;

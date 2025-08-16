@@ -6,7 +6,10 @@ const validateRequest = (schema) => (req, res, next) => {
       .json({ message: 'Request body must be a valid JSON object' });
   }
 
-  const { error } = schema.validate(req.body, { abortEarly: false });
+  const { error } = schema.validate(req.body, {
+    abortEarly: false,
+    stripUnknown: true,
+  });
 
   if (error) {
     return res.status(400).json({

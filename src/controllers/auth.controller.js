@@ -1,14 +1,20 @@
+/**
+ * Controllers: register, login, refresh, logout.
+ * Minimal logic here; delegate to services and models.
+ */
+
 const { User } = require('../models');
 const { authService } = require('../services');
 const { hashToken } = require('../utils/jwt');
 const logger = require('../utils/logger');
 
+/** POST /auth/register */
 const register = async (req, res, next) => {
   try {
-    let { email, name } = req.body;
     const { password } = req.body;
-    email = email?.toString().trim();
-    name = name?.toString().trim();
+    let { email, name } = req.body;
+    email = (email || '').toString().trim();
+    name = (name || '').toString().trim();
     const existing = await User.findOne({ email });
     if (existing) {
       return res.status(409).json({ message: 'Email already in use' });
@@ -26,20 +32,20 @@ const register = async (req, res, next) => {
         email: user.email,
         name: user.name,
       },
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
+      ...tokens,
     });
   } catch (error) {
     next(error);
   }
 };
 
+/** POST /auth/login */
 const login = async (req, res, next) => {
   try {
     let { email } = req.body;
     const { password } = req.body;
-    email = email?.toString().trim();
-    const user = await User.findOne({ email });
+    email = (email || '').toString().trim();
+    const user = await User.findOne({ email }).select('+passwordHash');
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
@@ -59,8 +65,7 @@ const login = async (req, res, next) => {
         id: user._id,
         email: user.email,
         password: user.password,
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
+        ...tokens,
       },
     });
   } catch (error) {
@@ -76,10 +81,7 @@ const refresh = async (req, res, next) => {
       ip: req.ip,
       userAgent: req.get('User-Agent'),
     });
-    res.status(200).json({
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-    });
+    res.status(200).json({ message: 'Token refreshed', tokens });
   } catch (error) {
     next(error);
   }

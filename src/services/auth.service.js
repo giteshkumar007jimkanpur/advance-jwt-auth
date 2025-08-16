@@ -1,4 +1,6 @@
-// business logic for tokens: create, rotate, revoke
+/**
+ * Business logic for authentication: creating, rotating, and revoking tokens.
+ */
 
 const sanitize = require('sanitize-html');
 
@@ -11,6 +13,11 @@ const {
   verifyRefreshToken,
 } = require('../utils/jwt');
 
+/**
+ * Create an access+refresh token pair and persist the (hashed) refresh token.
+ * @param {object} user - Mongoose User document
+ * @param {object} meta - { ip, userAgent }
+ */
 const createTokens = async (user, meta = {}) => {
   const accessToken = signAccessToken({
     sub: user._id.toString(),
@@ -36,9 +43,9 @@ const createTokens = async (user, meta = {}) => {
     ip: typeof meta?.ip === 'string' ? meta.ip.slice(0, 45) : undefined,
     userAgent: safeUserAgent(meta?.userAgent),
   };
-  const refreshTokenDoc = await RefreshToken.create(query);
+  await RefreshToken.create(query);
 
-  return { accessToken, refreshToken, refreshTokenDoc };
+  return { accessToken, refreshToken };
 };
 
 /**
