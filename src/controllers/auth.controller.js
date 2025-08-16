@@ -1,23 +1,23 @@
-const { User } = require("../models");
-const { authService } = require("../services");
-const { hashToken } = require("../utils/jwt");
-const logger = require("../utils/logger");
+const { User } = require('../models');
+const { authService } = require('../services');
+const { hashToken } = require('../utils/jwt');
+const logger = require('../utils/logger');
 
 const register = async (req, res, next) => {
   try {
-    let { email, password, name } = req.body;
+    let { email, name, password } = req.body;
     email = email?.toString().trim();
     name = name?.toString().trim();
     const existing = await User.findOne({ email });
     if (existing) {
-      return res.status(409).json({ message: "Email already in use" });
+      return res.status(409).json({ message: 'Email already in use' });
     }
 
     const passwordHash = await User.hashPassword(password);
     const user = await User.create({ email, passwordHash, name });
     const tokens = await authService.createTokens(user, {
       ip: req.ip,
-      userAgent: req.get("User-Agent"),
+      userAgent: req.get('User-Agent'),
     });
     res.status(201).json({
       user: {
@@ -45,7 +45,7 @@ const login = async (req, res, next) => {
 
     const tokens = await authService.createTokens(user, {
       ip: req.ip,
-      userAgent: req.get("User-Agent"),
+      userAgent: req.get('User-Agent'),
     });
 
     res.status(200).json({
@@ -68,7 +68,7 @@ const refresh = async (req, res, next) => {
     refreshToken = refreshToken?.toString().trim();
     const tokens = await authService.rotateRefreshToken(refreshToken, {
       ip: req.ip,
-      userAgent: req.get("User-Agent"),
+      userAgent: req.get('User-Agent'),
     });
     res.status(200).json({
       accessToken: tokens.accessToken,
@@ -81,7 +81,7 @@ const refresh = async (req, res, next) => {
 
 const logout = async (req, res) => {
   try {
-        let { refreshToken } = req.body;
+    let { refreshToken } = req.body;
     refreshToken = refreshToken?.toString().trim();
     const wasRevoked = await authService.revokeRefreshToken(refreshToken);
     if (!wasRevoked) {
@@ -96,11 +96,11 @@ const logout = async (req, res) => {
         .status(400)
         .json({ message: `Invalid or already revoked refresh token` });
     }
-    logger.info("Refresh token revoked successfully");
-    res.status(200).json({ message: "Logged out successfully" });
+    logger.info('Refresh token revoked successfully');
+    res.status(200).json({ message: 'Logged out successfully' });
   } catch (error) {
-    logger.error("Error during logout", { error: error.message });
-    res.status(500).json({ message: "Internal server error" });
+    logger.error('Error during logout', { error: error.message });
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 

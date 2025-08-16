@@ -1,10 +1,10 @@
-const Joi = require("joi");
+const Joi = require('joi');
 
 const registerSchema = Joi.object({
   email: Joi.string().email().required(),
   password: Joi.string().min(8).required(),
-  confirmPassword: Joi.string().valid(Joi.ref("password")).required().messages({
-    "any.only": "Confirm password must match password",
+  confirmPassword: Joi.string().valid(Joi.ref('password')).required().messages({
+    'any.only': 'Confirm password must match password',
   }),
   name: Joi.string().optional(),
 });

@@ -1,13 +1,15 @@
 // business logic for tokens: create, rotate, revoke
 
+const sanitize = require('sanitize-html');
+
+const { refreshTokenExpiry } = require('../config/env');
+const { RefreshToken } = require('../models');
 const {
+  hashToken,
   signAccessToken,
   signRefreshToken,
-  hashToken,
   verifyRefreshToken,
-} = require("../utils/jwt");
-const { refreshTokenExpiry } = require("../config/env");
-const { RefreshToken } = require("../models");
+} = require('../utils/jwt');
 
 const createTokens = async (user, meta = {}) => {
   const accessToken = signAccessToken({
@@ -23,7 +25,7 @@ const createTokens = async (user, meta = {}) => {
 
   const expiresIn = refreshTokenExpiry;
 
-  const msIn = expiresIn.endsWith("d")
+  const msIn = expiresIn.endsWith('d')
     ? parseInt(expiresIn) * 24 * 60 * 60 * 1000
     : 30 * 24 * 60 * 60 * 1000;
   const expiresAt = new Date(Date.now() + msIn);
@@ -31,8 +33,8 @@ const createTokens = async (user, meta = {}) => {
     user: user._id,
     tokenHash: refreshTokenHash,
     expiresAt,
-    ip: meta?.ip,
-    userAgent: meta?.userAgent,
+    ip: typeof meta?.ip === 'string' ? meta.ip.slice(0, 45) : undefined,
+    userAgent: safeUserAgent(meta?.userAgent),
   };
   const refreshTokenDoc = await RefreshToken.create(query);
 
@@ -53,7 +55,7 @@ const rotateRefreshToken = async (presentedToken, meta = {}) => {
   try {
     payload = verifyRefreshToken(presentedToken);
   } catch (err) {
-    throw Object.assign(new Error("Invalid refresh token"), {
+    throw Object.assign(new Error('Invalid refresh token'), {
       status: 401,
       cause: err.message,
     });
@@ -61,7 +63,7 @@ const rotateRefreshToken = async (presentedToken, meta = {}) => {
 
   const tokenHash = hashToken(presentedToken);
 
-  const existing = await RefreshToken.findOne({ tokenHash }).populate("user");
+  const existing = await RefreshToken.findOne({ tokenHash }).populate('user');
 
   // if token not found and token reuse or already revoked -> security event.
   // Revoke all refresh tokens for this user id if we can.
@@ -73,7 +75,7 @@ const rotateRefreshToken = async (presentedToken, meta = {}) => {
     }
 
     throw Object.assign(
-      new Error("Refresh token reuse detected; all sessions revoked"),
+      new Error('Refresh token reuse detected; all sessions revoked'),
       { status: 401 }
     );
   }
@@ -81,7 +83,7 @@ const rotateRefreshToken = async (presentedToken, meta = {}) => {
   // if token found but not active
   if (!existing.isActive) {
     // already revoked or expired
-    throw Object.assign(new Error("Refresh token not active"), { status: 401 });
+    throw Object.assign(new Error('Refresh token not active'), { status: 401 });
   }
 
   const { accessToken, refreshToken } = await createTokens(existing.user, meta);
@@ -111,6 +113,11 @@ const revokeRefreshToken = async (presentedToken) => {
     }
   );
   return result.modifiedCount === 1;
+};
+
+const safeUserAgent = (ua) => {
+  if (!ua || typeof ua !== 'string') return 'unknown';
+  return sanitize(ua, { allowedTags: [], allowedAttributes: {} }).slice(0, 255);
 };
 
 module.exports = {

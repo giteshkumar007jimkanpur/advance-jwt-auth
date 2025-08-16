@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const RefreshTokenSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: 'User',
     require: true,
   },
   tokenHash: { type: String, require: true, index: true },
@@ -15,12 +15,12 @@ const RefreshTokenSchema = new mongoose.Schema({
   userAgent: { type: String },
 });
 
-RefreshTokenSchema.virtual("isExpired").get(function () {
+RefreshTokenSchema.virtual('isExpired').get(function () {
   return Date.now() >= this.expiresAt;
 });
 
-RefreshTokenSchema.virtual("isActive").get(function () {
+RefreshTokenSchema.virtual('isActive').get(function () {
   return !this.revoked && !this.isExpired;
 });
 
-module.exports = mongoose.model("RefreshToken", RefreshTokenSchema);
+module.exports = mongoose.model('RefreshToken', RefreshTokenSchema);

@@ -1,13 +1,13 @@
-const logger = require("../utils/logger");
-const { nodeEnv } = require("../config/env");
+const { nodeEnv } = require('../config/env');
+const logger = require('../utils/logger');
 
 module.exports = (err, req, res, next) => {
   logger.error(err);
   const status = err.status || 500;
   const payload = {
-    message: err.message || "Internal Server Error",
+    message: err.message || 'Internal Server Error',
   };
-  if (nodeEnv !== "production") {
+  if (nodeEnv !== 'production') {
     payload.stack = err.stack;
   }
   res.status(status).json(payload);

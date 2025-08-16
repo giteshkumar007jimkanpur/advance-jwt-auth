@@ -1,15 +1,17 @@
-const jwt = require("jsonwebtoken");
-const { v4: uuidv4 } = require("uuid");
-const crypto = require("crypto");
+const crypto = require('crypto');
+
+const jwt = require('jsonwebtoken');
+const { v4: uuidv4 } = require('uuid');
+
 const {
-  accessTokenSecret,
   accessTokenExpiry,
-  refreshTokenSecret,
+  accessTokenSecret,
   refreshTokenExpiry,
-} = require("../config/env");
+  refreshTokenSecret,
+} = require('../config/env');
 
 if (!accessTokenSecret || !refreshTokenSecret) {
-  throw new Error("JWT secrets not set in env");
+  throw new Error('JWT secrets not set in env');
 }
 
 const signAccessToken = (payload) => {
@@ -33,7 +35,7 @@ const verifyRefreshToken = (token) => {
 };
 
 const hashToken = (token) => {
-  return crypto.createHash("sha256").update(token).digest("hex");
+  return crypto.createHash('sha256').update(token).digest('hex');
 };
 
 module.exports = {
