@@ -11,7 +11,7 @@ const hpp = require('hpp');
 const morgan = require('morgan');
 
 const { isProd } = require('./config/env');
-const errorHandler = require('./middlewares/error.handler');
+const errorHandler = require('./middlewares/error.handler.middleware');
 const requestContext = require('./middlewares/request.context.middleware');
 const router = require('./routes/index');
 const logger = require('./utils/logger');
@@ -80,7 +80,8 @@ app.use(limiter);
 /** Body Parsers */
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-//app.use(cookieParser()); // Not used
+// Cookie parser is available but intentionally disabled
+// app.use(cookieParser());
 
 /** Request logging -> pipes to winston in production, dev-friendly otherwise */
 /**

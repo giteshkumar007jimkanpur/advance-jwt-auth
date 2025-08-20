@@ -5,7 +5,7 @@ const passwordRules = Joi.string()
   .max(128)
   .pattern(/[a-z]/, 'lowercase')
   .pattern(/[A-Z]/, 'uppercase')
-  .pattern(/[0-9]/, 'digit')
+  .pattern(/\d/, 'digit')
   .pattern(/[^A-Za-z0-9]/, 'symbol')
   .required()
   .messages({
