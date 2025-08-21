@@ -23,7 +23,6 @@
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "dotenv": "^17.2.1",
-    "eslint-plugin-sort-keys-fix": "^1.1.2",
     "express": "^5.1.0",
     "express-rate-limit": "^8.0.1",
     "helmet": "^8.1.0",
@@ -46,6 +45,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-promise": "^7.2.1",
     "eslint-plugin-sort-destructure-keys": "^2.0.0",
+    "eslint-plugin-sort-keys-fix": "^1.1.2",
     "prettier": "^3.6.2"
   }
 }

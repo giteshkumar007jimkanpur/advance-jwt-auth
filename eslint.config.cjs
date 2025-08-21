@@ -2,7 +2,7 @@ const importPlugin = require('eslint-plugin-import');
 const prettierPlugin = require('eslint-plugin-prettier');
 const promisePlugin = require('eslint-plugin-promise');
 const sortDestructureKeysPlugin = require('eslint-plugin-sort-destructure-keys');
-const sortKeysFixPlugin = require('eslint-plugin-sort-keys-fix'); // 👈 NEW
+const sortKeysFixPlugin = require('eslint-plugin-sort-keys-fix');
 
 module.exports = [
   {

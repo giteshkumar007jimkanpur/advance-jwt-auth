@@ -38,7 +38,7 @@ const signAccessToken = (payload = {}) => {
       typ: 'access',
     },
     accessTokenSecret,
-    opts
+    opts,
   );
 };
 
@@ -59,7 +59,7 @@ const signRefreshToken = (payload = {}) => {
       typ: 'refresh',
     },
     refreshTokenSecret,
-    opts
+    opts,
   );
 };
 

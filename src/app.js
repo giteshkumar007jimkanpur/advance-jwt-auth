@@ -64,7 +64,7 @@ app.use(
 app.use(hpp());
 
 /** Basic rate limiting per IP */
-/** Without limiting, an attacker can span your API
+/** Without limiting, an attacker can spam your API
  * with thousand of requests per second -> DDOS atack
  * rateLimit restricts how many requests each IP can make in a window of time.
  */
