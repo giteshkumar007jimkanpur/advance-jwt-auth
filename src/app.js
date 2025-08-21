@@ -2,7 +2,7 @@
  * Express app bootstrap: security, headers, rate limit, parsing, logging, routes, errorHandling
  */
 const compression = require('compression');
-//const cookieParser = require('cookie-parser');
+// const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const express = require('express');
 const rateLimit = require('express-rate-limit');
